@@ -61,7 +61,7 @@ devel/include/comb/combConfig.h: ../cfg/comb.cfg
 devel/include/comb/combConfig.h: /opt/ros/melodic/share/dynamic_reconfigure/templates/ConfigType.py.template
 devel/include/comb/combConfig.h: /opt/ros/melodic/share/dynamic_reconfigure/templates/ConfigType.h.template
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/tintin/catkin_ws/src/comb/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating dynamic reconfigure files from cfg/comb.cfg: /home/tintin/catkin_ws/src/comb/build/devel/include/comb/combConfig.h /home/tintin/catkin_ws/src/comb/build/devel/lib/python2.7/dist-packages/comb/cfg/combConfig.py"
-	catkin_generated/env_cached.sh /usr/bin/python2 /home/tintin/catkin_ws/src/comb/cfg/comb.cfg /opt/ros/melodic/share/dynamic_reconfigure/cmake/.. /home/tintin/catkin_ws/src/comb/build/devel/share/comb /home/tintin/catkin_ws/src/comb/build/devel/include/comb /home/tintin/catkin_ws/src/comb/build/devel/lib/python2.7/dist-packages/comb
+	catkin_generated/env_cached.sh /home/tintin/catkin_ws/src/comb/build/setup_custom_pythonpath.sh /home/tintin/catkin_ws/src/comb/cfg/comb.cfg /opt/ros/melodic/share/dynamic_reconfigure/cmake/.. /home/tintin/catkin_ws/src/comb/build/devel/share/comb /home/tintin/catkin_ws/src/comb/build/devel/include/comb /home/tintin/catkin_ws/src/comb/build/devel/lib/python2.7/dist-packages/comb
 
 devel/share/comb/docs/combConfig.dox: devel/include/comb/combConfig.h
 	@$(CMAKE_COMMAND) -E touch_nocreate devel/share/comb/docs/combConfig.dox
