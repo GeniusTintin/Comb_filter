@@ -10,6 +10,7 @@ The intensity of the filter function was computed in log intensity state.
 There is a particular function to convert that back to the image file.
 */
 
+
 enum {GAUSSIAN, BILATERAL};
 
 namespace comb{
