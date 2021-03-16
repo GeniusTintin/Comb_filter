@@ -125,6 +125,9 @@ namespace comb{
                         grab_delay(y_d2_, int(d2_/mtr_), 2);
                         grab_delay(y_d12_, int(d12_/mtr_), 2);
                         // calculate new y0_
+
+                        convert_log_intensity_state_to_display_image(x0_, ts); 
+
                         y0_ = x0_ - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
 
                         store2buffer(x0_, y0_);
@@ -326,8 +329,7 @@ namespace comb{
 
         cv::Mat display_image;
         cv_bridge::CvImage cv_image;
-
-        convert_log_intensity_state_to_display_image(display_image, timestamp.toSec());
+        display_image = y0_;
 
         if (color_image_){
 
