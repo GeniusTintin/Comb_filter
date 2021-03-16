@@ -131,11 +131,6 @@ namespace comb{
 
                         t_next_store_ += mtr_;
                     }
-                    
-                    // VLOG(1) << "after grab delay.";
-
-                    // calculate y (comb filter)
-                    // y0_ = x0_ - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
 
                     if (publish_framerate_ > 0 && ts >= t_next_publish_){
                         
