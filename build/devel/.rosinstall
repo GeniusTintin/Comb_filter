@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/tintin/catkin_ws/src/comb/build/devel/setup.sh

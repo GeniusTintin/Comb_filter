@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>comb</name>
+  <version>0.1.0</version>
+  <description>The comb package</description>
+
+  <maintainer email="tintinpost@outlook.com">tintin</maintainer>
+
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>catkin_simple</buildtool_depend>
+
+  <depend>cv_bridge</depend>
+  <depend>dvs_msgs</depend>
+  <depend>dynamic_reconfigure</depend>
+  <depend>image_transport</depend>
+  <depend>rosbag</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>gflags_catkin</depend>
+  <depend>glog_catkin</depend>
+
+</package>

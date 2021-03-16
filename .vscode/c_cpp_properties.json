@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "databaseFilename": "",
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "includePath": [
+                "/home/tintin/catkin_ws/devel/include/**",
+                "/opt/ros/melodic/include/**",
+                "/home/tintin/catkin_ws/src/beginner_tutorials/include/**",
+                "/home/tintin/catkin_ws/src/comb/include/**",
+                "/home/tintin/catkin_ws/src/dvs_image_reconstruction/complementary_filter/include/**",
+                "/home/tintin/catkin_ws/src/rpg_dvs_ros/davis_ros_driver/include/**",
+                "/home/tintin/catkin_ws/src/rpg_dvs_ros/dvs_calibration/include/**",
+                "/home/tintin/catkin_ws/src/rpg_dvs_ros/dvs_renderer/include/**",
+                "/home/tintin/catkin_ws/src/rpg_dvs_ros/dvs_ros_driver/include/**",
+                "/home/tintin/catkin_ws/src/rpg_dvs_ros/dvxplorer_ros_driver/include/**",
+                "/home/tintin/catkin_ws/src/dvs_image_reconstruction/pure_event_reconstruction/include/**",
+                "/home/tintin/catkin_ws/src/test_cv/include/**",
+                "/usr/include/**"
+            ],
+            "name": "ROS",
+            "configurationProvider": "ms-vscode.cmake-tools"
+        }
+    ],
+    "version": 4
+}
