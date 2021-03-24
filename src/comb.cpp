@@ -70,9 +70,9 @@ namespace comb{
         //  event_count_total_ = 0.0;
 
         // dynamic reconfigure
-        dynamic_reconfigure_callback_ = boost::bind(&Comb_filter::reconfigureCallback, this, _1, _2);
-        server_.reset(new dynamic_reconfigure::Server<comb::combConfig>(nh_private));
-        server_->setCallback(dynamic_reconfigure_callback_);
+        // dynamic_reconfigure_callback_ = boost::bind(&Comb_filter::reconfigureCallback, this, _1, _2);
+        // server_.reset(new dynamic_reconfigure::Server<comb::combConfig>(nh_private));
+        // server_->setCallback(dynamic_reconfigure_callback_);
     }
 
     Comb_filter::~Comb_filter(){
@@ -359,6 +359,7 @@ namespace comb{
         cv_image.image = display_image;
         cv_image.header.stamp = timestamp;
         intensity_estimate_pub_.publish(cv_image.toImageMsg());
+        VLOG(1) << "Publish image message";
 
         if (save_images_){
 
@@ -396,25 +397,25 @@ namespace comb{
 
             if (adaptive_dynamic_range_){
                 // VLOG(1) << "adaptive dynamic range";
-                constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
-                constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
-                constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
+                // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
+                // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
+                // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
 
-                double robust_min, robust_max;
-                minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
+                // double robust_min, robust_max;
+                // minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
 
-                //
-                intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
+                // //
+                // intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
 
-                intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
+                // intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
 
-                intensity_lower_bound = robust_min;
-                intensity_upper_bound = robust_max;
+                // intensity_lower_bound = robust_min;
+                // intensity_upper_bound = robust_max;
             }
             else{
                 VLOG(1) << "fixed dynamic range";
-                intensity_lower_bound = beta * intensity_lower_bound + (1 - beta) * intensity_min_user_defined_;
-                intensity_upper_bound = beta * intensity_upper_bound + (1 - beta) * intensity_max_user_defined_;
+                intensity_lower_bound = intensity_lower_bound;
+                intensity_upper_bound = intensity_upper_bound;
             }
         }
         const double intensity_range = intensity_upper_bound - intensity_lower_bound;
@@ -425,33 +426,32 @@ namespace comb{
         t_last = ts;
     }
 
-    void Comb_filter::minMaxLocRobust(const cv::Mat& image, double* robust_min, double* robust_max, const double& percentage_pixels_to_discard){
-        //   CHECK_NOTNULL(robust_max);
-        //   CHECK_NOTNULL(robust_min);
-        cv::Mat image_as_row;
-        cv::Mat image_as_row_sorted;
-        const int single_row_idx_min = (0.5*percentage_pixels_to_discard/100)*image.total();
-        const int single_row_idx_max = (1 - 0.5*percentage_pixels_to_discard/100)*image.total();
-        image_as_row = image.reshape(0, 1);
-        cv::sort(image_as_row, image_as_row_sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
-        image_as_row_sorted.convertTo(image_as_row_sorted, CV_64FC1);
-        *robust_min = image_as_row_sorted.at<double>(single_row_idx_min);
-        *robust_max = image_as_row_sorted.at<double>(single_row_idx_max);
-    }   
+    // void Comb_filter::minMaxLocRobust(const cv::Mat& image, double* robust_min, double* robust_max, const double& percentage_pixels_to_discard){
+    //     //   CHECK_NOTNULL(robust_max);
+    //     //   CHECK_NOTNULL(robust_min);
+    //     cv::Mat image_as_row;
+    //     cv::Mat image_as_row_sorted;
+    //     const int single_row_idx_min = (0.5*percentage_pixels_to_discard/100)*image.total();
+    //     const int single_row_idx_max = (1 - 0.5*percentage_pixels_to_discard/100)*image.total();
+    //     image_as_row = image.reshape(0, 1);
+    //     cv::sort(image_as_row, image_as_row_sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
+    //     image_as_row_sorted.convertTo(image_as_row_sorted, CV_64FC1);
+    //     *robust_min = image_as_row_sorted.at<double>(single_row_idx_min);
+    //     *robust_max = image_as_row_sorted.at<double>(single_row_idx_max);
+    // }   
 
-    void Comb_filter::reconfigureCallback(comb::combConfig &config, uint32_t level){
-
-        cutoff_frequency_global_ = config.Cutoff_frequency * 2 * M_PI;
-        cutoff_frequency_per_event_component_ = config.Cutoff_frequency_per_event_component;
-        contrast_threshold_on_user_defined_ = config.Contrast_threshold_ON;
-        contrast_threshold_off_user_defined_ = config.Contrast_threshold_OFF;
-        intensity_min_user_defined_ = config.Intensity_min;
-        intensity_max_user_defined_ = config.Intensity_max;
-        adaptive_contrast_threshold_ = config.Auto_detect_contrast_thresholds;
-        spatial_filter_sigma_ = config.Spatial_filter_sigma;
-        spatial_smoothing_method_ = int(config.Bilateral_filter);
-        adaptive_dynamic_range_ = config.Auto_adjust_dynamic_range;
-        color_image_ = config.Color_display;
-    }
+    // void Comb_filter::reconfigureCallback(comb::combConfig &config, uint32_t level){
+    //     cutoff_frequency_global_ = config.Cutoff_frequency * 2 * M_PI;
+    //     cutoff_frequency_per_event_component_ = config.Cutoff_frequency_per_event_component;
+    //     contrast_threshold_on_user_defined_ = config.Contrast_threshold_ON;
+    //     contrast_threshold_off_user_defined_ = config.Contrast_threshold_OFF;
+    //     intensity_min_user_defined_ = config.Intensity_min;
+    //     intensity_max_user_defined_ = config.Intensity_max;
+    //     adaptive_contrast_threshold_ = config.Auto_detect_contrast_thresholds;
+    //     spatial_filter_sigma_ = config.Spatial_filter_sigma;
+    //     spatial_smoothing_method_ = int(config.Bilateral_filter);
+    //     adaptive_dynamic_range_ = config.Auto_adjust_dynamic_range;
+    //     color_image_ = config.Color_display;
+    // }
 
 }
