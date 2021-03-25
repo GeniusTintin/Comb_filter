@@ -110,12 +110,14 @@ namespace comb{
 
                     // integral tracking
                     integral_tracking(x, y, polarity);
-                    // VLOG(1) << "after integral tracking.";
 
                     while(ts > t_next_store_){
                         if(t_next_store_ == 0){
                             t_next_store_ = ts;
                         } 
+
+                        cv::Mat x0_e; // exponentional version of x0_
+                        exp_of_log(x0_e);
 
                         grab_delay(x_d1_, int(d1_/mtr_), 1);
                         grab_delay(x_d2_, int(d2_/mtr_), 1);
@@ -125,9 +127,9 @@ namespace comb{
                         grab_delay(y_d2_, int(d2_/mtr_), 2);
                         grab_delay(y_d12_, int(d12_/mtr_), 2);
                         // calculate new y0_
-                        y0_ = x0_ - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
+                        y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
 
-                        store2buffer(x0_, y0_);
+                        store2buffer(x0_e, y0_);
 
                         t_next_store_ += mtr_;
                     }
@@ -340,7 +342,8 @@ namespace comb{
         cv::Mat display_image;
         cv_bridge::CvImage cv_image;
 
-        convert_log_intensity_state_to_display_image(display_image, timestamp.toSec());
+        // convert_log_intensity_state_to_display_image(display_image, timestamp.toSec());
+        output_regulator(display_image, timestamp.toSec());
 
         if (color_image_){
 
@@ -383,60 +386,96 @@ namespace comb{
         }
     }
 
-    void Comb_filter::convert_log_intensity_state_to_display_image(cv::Mat &image_out, const double &ts){
+    // void Comb_filter::convert_log_intensity_state_to_display_image(cv::Mat &image_out, const double &ts){
+
+    //     double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
+
+    //     // constexpr double PERCENTAGE_PIXELS_TO_DISCARD = 0.5;
+    //     // constexpr double FADE_DURATION = 2;                    // seconds. Time taken for dynamic range bounds to "take effect".
+    //     // // used for low-pass parameter to reach 95% of constant signal in FADE_DURATION seconds.
+    //     // double ALPHA = -std::log(1 - 0.95) / FADE_DURATION; // rad/s.
+    //     // constexpr double EXPECTED_MEAN = 0.5;
+
+    //     static double t_last = 0.0;
+    //     static double intensity_lower_bound = intensity_min_user_defined_;
+    //     static double intensity_upper_bound = intensity_max_user_defined_;
+
+    //     const double delta_t = ts - t_last;
+    //     // const double beta = std::exp(-delta_t * ALPHA); // low-pass parameter
+
+    //     cv::Mat image;
+
+    //     y0_.copyTo(image);             // ~[-0.5, 0.5]
+    //     image += LOG_INTENSITY_OFFSET; // [-0.1, 0.9]
+    //     cv::exp(image, image);         // ~[1, 2]
+    //     image -= 1;                    // [0, 1]
+
+    //     if (delta_t >= 0){
+
+    //         if (adaptive_dynamic_range_){
+    //             VLOG(1) << "adaptive dynamic range";
+    //             // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
+    //             // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
+    //             // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
+    //             //
+    //             // double robust_min, robust_max;
+    //             // minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
+    //             //
+    //             //
+    //             // intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
+    //             //
+    //             // intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
+    //             //
+    //             // intensity_lower_bound = robust_min;
+    //             // intensity_upper_bound = robust_max;
+    //         }
+    //         else{
+    //             VLOG(1) << "fixed dynamic range";
+    //             intensity_lower_bound = intensity_lower_bound;
+    //             intensity_upper_bound = intensity_upper_bound;
+    //         }
+    //     }
+    //     const double intensity_range = intensity_upper_bound - intensity_lower_bound;
+    //     image -= intensity_lower_bound;
+        
+    //     image.convertTo(image_out, CV_8UC1, 255.0 / intensity_range);
+    //     t_last = ts;
+    // }
+
+    void Comb_filter::exp_of_log(cv::Mat& converted_image){
 
         double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
 
-        // constexpr double PERCENTAGE_PIXELS_TO_DISCARD = 0.5;
-        // constexpr double FADE_DURATION = 2;                    // seconds. Time taken for dynamic range bounds to "take effect".
-        // // used for low-pass parameter to reach 95% of constant signal in FADE_DURATION seconds.
-        // double ALPHA = -std::log(1 - 0.95) / FADE_DURATION; // rad/s.
-        // constexpr double EXPECTED_MEAN = 0.5;
+        x0_.copyTo(converted_image);
+        converted_image += LOG_INTENSITY_OFFSET;
+        cv::exp(converted_image, converted_image);
+        converted_image -= 1;
 
-        static double t_last = 0.0;
-        static double intensity_lower_bound = intensity_min_user_defined_;
-        static double intensity_upper_bound = intensity_max_user_defined_;
+    }
 
-        const double delta_t = ts - t_last;
-        // const double beta = std::exp(-delta_t * ALPHA); // low-pass parameter
+    void Comb_filter::output_regulator(cv::Mat& image_out, const double &ts){
 
         cv::Mat image;
 
-        y0_.copyTo(image);             // ~[-0.5, 0.5]
-        image += LOG_INTENSITY_OFFSET; // [-0.1, 0.9]
-        cv::exp(image, image);         // ~[1, 2]
-        image -= 1;                    // [0, 1]
+        y0_.copyTo(image);
 
-        if (delta_t >= 0){
+        static double intensity_lower_bound = intensity_min_user_defined_;
+        static double intensity_upper_bound = intensity_max_user_defined_;
+        static double t_last = 0.0;
+        const double delta_t = ts - t_last;
 
-            if (adaptive_dynamic_range_){
-                VLOG(1) << "adaptive dynamic range";
-                // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
-                // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
-                // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
-                //
-                // double robust_min, robust_max;
-                // minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
-                //
-                //
-                // intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
-                //
-                // intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
-                //
-                // intensity_lower_bound = robust_min;
-                // intensity_upper_bound = robust_max;
-            }
-            else{
-                VLOG(1) << "fixed dynamic range";
-                intensity_lower_bound = intensity_lower_bound;
-                intensity_upper_bound = intensity_upper_bound;
-            }
+        if(delta_t >= 0){
+
+            intensity_lower_bound = intensity_lower_bound;
+            intensity_upper_bound = intensity_upper_bound;
         }
+
         const double intensity_range = intensity_upper_bound - intensity_lower_bound;
         image -= intensity_lower_bound;
         
         image.convertTo(image_out, CV_8UC1, 255.0 / intensity_range);
         t_last = ts;
+
     }
 
     // void Comb_filter::minMaxLocRobust(const cv::Mat& image, double* robust_min, double* robust_max, const double& percentage_pixels_to_discard){

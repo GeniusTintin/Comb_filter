@@ -49,13 +49,15 @@ private:
   void update_leaky_event_count(const double& ts, const int& x, const int& y, const bool& polarity);
   void recalibrate_contrast_thresholds(const double& ts);
   void publish_intensity_estimate(const ros::Time& ts);
-  void convert_log_intensity_state_to_display_image(cv::Mat& display_image, const double& ts);
+  // void convert_log_intensity_state_to_display_image(cv::Mat& display_image, const double& ts);
   // void minMaxLocRobust(const cv::Mat& image, double* lower_bound, double* upper_bound,
                                           // const double& percentage_pixels_to_discard);
   void initialise_buffer(const uint32_t& rows, const uint32_t& columns);
   void integral_tracking(const int x, const int y, const bool polarity);
   void store2buffer(const cv::Mat& figx, const cv::Mat& figy);
   void grab_delay(cv::Mat& sel, const int i1, const int which_buffer);
+  void exp_of_log(cv::Mat& converted_image);
+  void output_regulator(cv::Mat& image_out, const double &ts);
  
   // dynamic reconfigure
   // boost::shared_ptr<dynamic_reconfigure::Server<comb::combConfig> > server_;
