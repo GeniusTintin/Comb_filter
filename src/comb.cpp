@@ -164,6 +164,19 @@ namespace comb{
         t_next_recalibrate_contrast_thresholds_ = 0.0;
         t_next_log_intensity_update_ = 0.0;
 
+        // come from dynamic reconfiguration
+        cutoff_frequency_global_ = 0.06 * 2 * M_PI;
+        cutoff_frequency_per_event_component_ = 0.06;
+        contrast_threshold_on_user_defined_ = 0.1;
+        contrast_threshold_off_user_defined_ = -0.1;
+        intensity_min_user_defined_ = -0.5;
+        intensity_max_user_defined_ = 1.5;
+        adaptive_contrast_threshold_ = false;
+        spatial_filter_sigma_ = 0;
+        spatial_smoothing_method_ = 0;
+        adaptive_dynamic_range_ = false;
+        color_image_ = false;
+
         // delayed version of integrated events
         x0_ = cv::Mat::zeros(rows, columns, CV_64FC1);
         x_d1_ = cv::Mat::zeros(rows, columns, CV_64FC1);
@@ -396,7 +409,7 @@ namespace comb{
         if (delta_t >= 0){
 
             if (adaptive_dynamic_range_){
-                // VLOG(1) << "adaptive dynamic range";
+                VLOG(1) << "adaptive dynamic range";
                 // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
                 // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
                 // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
