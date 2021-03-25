@@ -385,19 +385,20 @@ namespace comb{
 
     void Comb_filter::convert_log_intensity_state_to_display_image(cv::Mat &image_out, const double &ts){
 
-        constexpr double PERCENTAGE_PIXELS_TO_DISCARD = 0.5;
         double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
-        constexpr double FADE_DURATION = 2;                    // seconds. Time taken for dynamic range bounds to "take effect".
-        // used for low-pass parameter to reach 95% of constant signal in FADE_DURATION seconds.
-        double ALPHA = -std::log(1 - 0.95) / FADE_DURATION; // rad/s.
-        constexpr double EXPECTED_MEAN = 0.5;
+
+        // constexpr double PERCENTAGE_PIXELS_TO_DISCARD = 0.5;
+        // constexpr double FADE_DURATION = 2;                    // seconds. Time taken for dynamic range bounds to "take effect".
+        // // used for low-pass parameter to reach 95% of constant signal in FADE_DURATION seconds.
+        // double ALPHA = -std::log(1 - 0.95) / FADE_DURATION; // rad/s.
+        // constexpr double EXPECTED_MEAN = 0.5;
 
         static double t_last = 0.0;
         static double intensity_lower_bound = intensity_min_user_defined_;
         static double intensity_upper_bound = intensity_max_user_defined_;
 
         const double delta_t = ts - t_last;
-        const double beta = std::exp(-delta_t * ALPHA); // low-pass parameter
+        // const double beta = std::exp(-delta_t * ALPHA); // low-pass parameter
 
         cv::Mat image;
 
@@ -413,15 +414,15 @@ namespace comb{
                 // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
                 // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
                 // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
-
+                //
                 // double robust_min, robust_max;
                 // minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
-
-                // //
+                //
+                //
                 // intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
-
+                //
                 // intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
-
+                //
                 // intensity_lower_bound = robust_min;
                 // intensity_upper_bound = robust_max;
             }
@@ -435,7 +436,6 @@ namespace comb{
         image -= intensity_lower_bound;
         
         image.convertTo(image_out, CV_8UC1, 255.0 / intensity_range);
-        // image.convertTo(image_out, CV_8UC1, 255.0);
         t_last = ts;
     }
 
