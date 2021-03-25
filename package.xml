@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>comb</name>
-  <version>0.1.0</version>
+  <version>0.1.2</version>
   <description>The comb package</description>
 
   <maintainer email="tintinpost@outlook.com">tintin</maintainer>
@@ -13,7 +13,6 @@
 
   <depend>cv_bridge</depend>
   <depend>dvs_msgs</depend>
-  <depend>dynamic_reconfigure</depend>
   <depend>image_transport</depend>
   <depend>rosbag</depend>
   <depend>roscpp</depend>

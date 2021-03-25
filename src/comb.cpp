@@ -67,12 +67,7 @@ namespace comb{
         t_next_publish_ = 0.0;
         t_next_recalibrate_contrast_thresholds_ = 0.0;
         t_next_log_intensity_update_ = 0.0;
-        //  event_count_total_ = 0.0;
 
-        // dynamic reconfigure
-        // dynamic_reconfigure_callback_ = boost::bind(&Comb_filter::reconfigureCallback, this, _1, _2);
-        // server_.reset(new dynamic_reconfigure::Server<comb::combConfig>(nh_private));
-        // server_->setCallback(dynamic_reconfigure_callback_);
     }
 
     Comb_filter::~Comb_filter(){
@@ -86,7 +81,6 @@ namespace comb{
 
     void Comb_filter::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg){
         // initialise image states
-        // VLOG(1) << "Inside callback." ;
         if (!initialised_){
 
             initialise_image_states(msg->height, msg->width);
@@ -246,14 +240,6 @@ namespace comb{
 
     void Comb_filter::store2buffer(const cv::Mat &figx, const cv::Mat &figy){
 
-        // double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
-        // cv::Mat image;
-
-        // fig.copyTo(image);
-        // image += LOG_INTENSITY_OFFSET;
-        // cv::exp(image, image);         // ~[1, 2]
-        // image -= 1;                    // [0, 1]
-
         // buffer index of input and output is the same
 
         figx.copyTo(ring_buffer1_[buffer_index_]);
@@ -386,62 +372,6 @@ namespace comb{
         }
     }
 
-    // void Comb_filter::convert_log_intensity_state_to_display_image(cv::Mat &image_out, const double &ts){
-
-    //     double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
-
-    //     // constexpr double PERCENTAGE_PIXELS_TO_DISCARD = 0.5;
-    //     // constexpr double FADE_DURATION = 2;                    // seconds. Time taken for dynamic range bounds to "take effect".
-    //     // // used for low-pass parameter to reach 95% of constant signal in FADE_DURATION seconds.
-    //     // double ALPHA = -std::log(1 - 0.95) / FADE_DURATION; // rad/s.
-    //     // constexpr double EXPECTED_MEAN = 0.5;
-
-    //     static double t_last = 0.0;
-    //     static double intensity_lower_bound = intensity_min_user_defined_;
-    //     static double intensity_upper_bound = intensity_max_user_defined_;
-
-    //     const double delta_t = ts - t_last;
-    //     // const double beta = std::exp(-delta_t * ALPHA); // low-pass parameter
-
-    //     cv::Mat image;
-
-    //     y0_.copyTo(image);             // ~[-0.5, 0.5]
-    //     image += LOG_INTENSITY_OFFSET; // [-0.1, 0.9]
-    //     cv::exp(image, image);         // ~[1, 2]
-    //     image -= 1;                    // [0, 1]
-
-    //     if (delta_t >= 0){
-
-    //         if (adaptive_dynamic_range_){
-    //             VLOG(1) << "adaptive dynamic range";
-    //             // constexpr double MAX_INTENSITY_LOWER_BOUND = EXPECTED_MEAN - 0.2;
-    //             // constexpr double MIN_INTENSITY_UPPER_BOUND = EXPECTED_MEAN + 0.2;
-    //             // constexpr double EXTEND_RANGE = 0.05; // extend dynamic range for visual appeal.
-    //             //
-    //             // double robust_min, robust_max;
-    //             // minMaxLocRobust(image, &robust_min, &robust_max, PERCENTAGE_PIXELS_TO_DISCARD);
-    //             //
-    //             //
-    //             // intensity_lower_bound = std::min(beta * intensity_lower_bound + (1 - beta) * (robust_min - EXTEND_RANGE), MAX_INTENSITY_LOWER_BOUND);
-    //             //
-    //             // intensity_upper_bound = std::max(beta * intensity_upper_bound + (1 - beta) * (robust_max + EXTEND_RANGE), MIN_INTENSITY_UPPER_BOUND);
-    //             //
-    //             // intensity_lower_bound = robust_min;
-    //             // intensity_upper_bound = robust_max;
-    //         }
-    //         else{
-    //             VLOG(1) << "fixed dynamic range";
-    //             intensity_lower_bound = intensity_lower_bound;
-    //             intensity_upper_bound = intensity_upper_bound;
-    //         }
-    //     }
-    //     const double intensity_range = intensity_upper_bound - intensity_lower_bound;
-    //     image -= intensity_lower_bound;
-        
-    //     image.convertTo(image_out, CV_8UC1, 255.0 / intensity_range);
-    //     t_last = ts;
-    // }
-
     void Comb_filter::exp_of_log(cv::Mat& converted_image){
 
         double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
@@ -477,33 +407,5 @@ namespace comb{
         t_last = ts;
 
     }
-
-    // void Comb_filter::minMaxLocRobust(const cv::Mat& image, double* robust_min, double* robust_max, const double& percentage_pixels_to_discard){
-    //     //   CHECK_NOTNULL(robust_max);
-    //     //   CHECK_NOTNULL(robust_min);
-    //     cv::Mat image_as_row;
-    //     cv::Mat image_as_row_sorted;
-    //     const int single_row_idx_min = (0.5*percentage_pixels_to_discard/100)*image.total();
-    //     const int single_row_idx_max = (1 - 0.5*percentage_pixels_to_discard/100)*image.total();
-    //     image_as_row = image.reshape(0, 1);
-    //     cv::sort(image_as_row, image_as_row_sorted, CV_SORT_EVERY_ROW + CV_SORT_ASCENDING);
-    //     image_as_row_sorted.convertTo(image_as_row_sorted, CV_64FC1);
-    //     *robust_min = image_as_row_sorted.at<double>(single_row_idx_min);
-    //     *robust_max = image_as_row_sorted.at<double>(single_row_idx_max);
-    // }   
-
-    // void Comb_filter::reconfigureCallback(comb::combConfig &config, uint32_t level){
-    //     cutoff_frequency_global_ = config.Cutoff_frequency * 2 * M_PI;
-    //     cutoff_frequency_per_event_component_ = config.Cutoff_frequency_per_event_component;
-    //     contrast_threshold_on_user_defined_ = config.Contrast_threshold_ON;
-    //     contrast_threshold_off_user_defined_ = config.Contrast_threshold_OFF;
-    //     intensity_min_user_defined_ = config.Intensity_min;
-    //     intensity_max_user_defined_ = config.Intensity_max;
-    //     adaptive_contrast_threshold_ = config.Auto_detect_contrast_thresholds;
-    //     spatial_filter_sigma_ = config.Spatial_filter_sigma;
-    //     spatial_smoothing_method_ = int(config.Bilateral_filter);
-    //     adaptive_dynamic_range_ = config.Auto_adjust_dynamic_range;
-    //     color_image_ = config.Color_display;
-    // }
 
 }
