@@ -13,7 +13,7 @@ BagPlayer::BagPlayer(const std::string& file_name)
 
   void BagPlayer::attachCallbackToTopic(const std::string& topic, const std::function<void(const rosbag::MessageInstance&)>& callback){
     VLOG(1) << "Inside function attachCallBackToTopic.";
-    CHECK(subscriptions_.emplace(topic, callback).second);
+    CHECK(subscriptions_.emplace(topic, callback).second) << "emplace Failed!";
 }
 
 void BagPlayer::play()
