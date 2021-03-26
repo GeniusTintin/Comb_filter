@@ -83,6 +83,7 @@ namespace comb{
         // initialise image states
         if (!initialised_){
 
+            //FIXME width and height
             initialise_image_states(msg->height, msg->width);
         }
 
@@ -101,7 +102,7 @@ namespace comb{
                 if (x > 0 && x < msg->width && y > 0 && y < msg->height){
 
                     const double ts = msg->events[i].ts.toSec();
-                    VLOG(1) << ts;
+                    // VLOG(1) << ts;
                     const bool polarity = msg->events[i].polarity;
 
                     if (adaptive_contrast_threshold_){
