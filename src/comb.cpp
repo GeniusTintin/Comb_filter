@@ -87,14 +87,21 @@ namespace comb{
         }
 
         if (msg->events.size() > 0){
+            // testing
+            VLOG(1) << msg->events.size();
             for (int i = 0; i < msg->events.size(); i++){
 
                 const int x = msg->events[i].x;
                 const int y = msg->events[i].y;
 
+                // VLOG(1) << "x = " << x << ", y = "<< y;
+                VLOG(1) << msg->width;
+
+                // FIXME msg->width
                 if (x > 0 && x < msg->width && y > 0 && y < msg->height){
 
                     const double ts = msg->events[i].ts.toSec();
+                    VLOG(1) << ts;
                     const bool polarity = msg->events[i].polarity;
 
                     if (adaptive_contrast_threshold_){
