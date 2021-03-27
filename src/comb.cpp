@@ -98,13 +98,13 @@ namespace comb{
 
         if (!initialised_){
 
-            //FIXME width and height
+            // width and height
             initialise_image_states(msg_height, msg_width);
         }
 
         if (msg->events.size() > 0){
             // testing
-            VLOG(1) << msg->events.size();
+            // VLOG(1) << msg->events.size();
             for (int i = 0; i < msg->events.size(); i++){
 
                 const int x = msg->events[i].x;
@@ -113,7 +113,7 @@ namespace comb{
                 // VLOG(1) << "x = " << x << ", y = "<< y;
                 // VLOG(1) <<  msg_height << " " << msg_width;
 
-                // FIXME msg->width
+                // msg->width
                 if (x > 0 && x < msg_width && y > 0 && y < msg_height){
 
                     const double ts = msg->events[i].ts.toSec();
