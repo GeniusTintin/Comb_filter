@@ -136,19 +136,21 @@ namespace comb{
                         cv::Mat x0_e; // exponentional version of x0_
                         exp_of_log(x0_e);
 
-                        grab_delay(x_d1_, int(d1_/mtr_), 1);
-                        grab_delay(x_d2_, int(d2_/mtr_), 1);
-                        grab_delay(x_d12_, int(d12_/mtr_), 1);
+                        grab_delay(x_d1_, int(d1_ * mtr_), 1);
+                        // grab_delay(x_d2_, int(d2_ * mtr_), 1);
+                        // grab_delay(x_d12_, int(d12_ * mtr_), 1);
 
-                        grab_delay(y_d1_, int(d1_/mtr_), 2);
-                        grab_delay(y_d2_, int(d2_/mtr_), 2);
-                        grab_delay(y_d12_, int(d12_/mtr_), 2);
+                        // grab_delay(y_d1_, int(d1_ * mtr_), 2);
+                        // grab_delay(y_d2_, int(d2_ * mtr_), 2);
+                        // grab_delay(y_d12_, int(d12_ * mtr_), 2);
                         // calculate new y0_
-                        y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
-
+                        // y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
+                        y0_ = x0_e - x_d1_;
+                        // FIXME
+                        // std::cout << x_d1_ << std::endl;
                         store2buffer(x0_e, y0_);
 
-                        t_next_store_ += mtr_;
+                        t_next_store_ += 1/mtr_;
                     }
 
                     if (publish_framerate_ > 0 && ts >= t_next_publish_){
@@ -215,10 +217,14 @@ namespace comb{
         y_d12_ = cv::Mat::zeros(rows, columns, CV_64FC1);
 
         // time delay
-        d1_ = 0.01;
-        d2_ = 0.001;
+        double base_freq;
+        std::cout << "Enter base frequency: " << std::endl;
+        std::cin >> base_freq;
+        
+        d1_ = 1/base_freq;
+        d2_ = d1_/10;
         d12_ = d1_ + d2_;
-
+        
         // delay gain
         rho1_ = 0.99;  // distortion reduce factor
         rho2_ = 0.999; // compensate factor
@@ -226,7 +232,7 @@ namespace comb{
         initialise_buffer(rows, columns);
 
         initialised_ = true;
-
+        
         VLOG(2) << "Initialised!";
     }
 
@@ -234,11 +240,19 @@ namespace comb{
     void Comb_filter::initialise_buffer(const uint32_t &rows, const uint32_t &columns){
 
         // minimum time resolution
-        mtr_ = 1e-5;
+        mtr_ = 1e5; // NOTE: this should be 1e-5, but due to the accuracy of the floating point number we use positive here!
         t_next_store_ = 0.0;
 
-        buffer_length_ = d12_ / mtr_ + 1;
+        // FIXME
+        std::cout << d1_ << " " << d2_ << " " << d12_ << std::endl;
+        std::cout << 1/mtr_ << std::endl;
+        buffer_length_ = int(d12_ * mtr_ + 1);
+        std::cout << buffer_length_ << std::endl;
         buffer_index_ = 0;
+
+        // int sizes[] = {rows, columns, buffer_length_};
+        // ring_buffer1_ = new cv::Mat(3, sizes, CV_64FC1, cv::Scalar(0));
+        // ring_buffer2_ = new cv::Mat(3, sizes, CV_64FC1, cv::Scalar(0));
 
         ring_buffer1_ = new cv::Mat[buffer_length_];
         ring_buffer2_ = new cv::Mat[buffer_length_];
@@ -250,6 +264,9 @@ namespace comb{
             my_zero.copyTo(ring_buffer1_[i]);
             my_zero.copyTo(ring_buffer2_[i]);
         }
+
+        // FIXME
+        // std::cout << "Size of ring buffer: " << sizeof(ring_buffer1_) << std::endl;
     }
 
     // tracking the integral to the current state
@@ -270,12 +287,10 @@ namespace comb{
     void Comb_filter::store2buffer(const cv::Mat &figx, const cv::Mat &figy){
 
         // buffer index of input and output is the same
-
         figx.copyTo(ring_buffer1_[buffer_index_]);
         figy.copyTo(ring_buffer2_[buffer_index_]);
 
         buffer_index_ ++;
-
         // ring buffer
         if (buffer_index_ >= buffer_length_){
 
@@ -341,12 +356,13 @@ namespace comb{
         if(index < 0){
             index = buffer_length_ + index;
         }
-
+        // FIXME
+        // std::cout << index << std::endl;
         if(which_buffer == 1){
-            sel = ring_buffer1_[index];
+            ring_buffer1_[index].copyTo(sel);
         }
         else{
-            sel = ring_buffer2_[index];
+            ring_buffer2_[index].copyTo(sel);
         }
 
         // return sel;
@@ -358,7 +374,8 @@ namespace comb{
         cv_bridge::CvImage cv_image;
 
         // convert_log_intensity_state_to_display_image(display_image, timestamp.toSec());
-        output_regulator(display_image, timestamp.toSec());
+        // output_regulator(display_image, timestamp.toSec());
+        y0_.convertTo(display_image, CV_8UC1, 255.0);
 
         if (color_image_){
 
