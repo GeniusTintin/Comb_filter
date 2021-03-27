@@ -51,6 +51,7 @@ private:
   void grab_delay(cv::Mat& sel, const int i1, const int which_buffer);
   void exp_of_log(cv::Mat& converted_image);
   void output_regulator(cv::Mat& image_out, const double &ts);
+  void user_size_input();
 
   // publishers
   image_transport::Publisher intensity_estimate_pub_;
@@ -86,12 +87,16 @@ private:
   bool adaptive_dynamic_range_;
   bool save_images_;
   bool color_image_;
+  bool user_defined_size_ = false;
 
   std::string save_dir_;
 
   int spatial_smoothing_method_;
   int buffer_length_;
   int buffer_index_;
+
+  uint32_t height_user_defined_;
+  uint32_t width_user_defined_;
 
   // cutoff frequencies
   double cutoff_frequency_global_; /** rad/s */

@@ -81,14 +81,19 @@ namespace comb{
 
     void Comb_filter::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg){
         // initialise image states
-        const uint32_t msg_height = msg->height;
-        const uint32_t msg_width = msg->width;
-
-        uint32_t height_user_defined;
-        uint32_t width_user_defined;
+        uint32_t msg_height = msg->height;
+        uint32_t msg_width = msg->width;
 
         if(msg_height == 0 || msg_width == 0){
-
+            if(user_defined_size_){
+                msg_height = height_user_defined_;
+                msg_width = width_user_defined_;
+            }
+            else{
+                user_size_input();
+                msg_height = height_user_defined_;
+                msg_width = width_user_defined_;
+            }
         }
 
         if (!initialised_){
@@ -106,7 +111,7 @@ namespace comb{
                 const int y = msg->events[i].y;
 
                 // VLOG(1) << "x = " << x << ", y = "<< y;
-                VLOG(1) << msg->width;
+                // VLOG(1) <<  msg_height << " " << msg_width;
 
                 // FIXME msg->width
                 if (x > 0 && x < msg_width && y > 0 && y < msg_height){
@@ -174,6 +179,7 @@ namespace comb{
         ts_array_on_ = cv::Mat::zeros(rows, columns, CV_64FC1);
         ts_array_off_ = cv::Mat::zeros(rows, columns, CV_64FC1);
 
+        // publish_framerate_ = 100;
         t_next_publish_ = 0.0;
         t_next_recalibrate_contrast_thresholds_ = 0.0;
         t_next_log_intensity_update_ = 0.0;
@@ -190,6 +196,11 @@ namespace comb{
         spatial_smoothing_method_ = 0;
         adaptive_dynamic_range_ = false;
         color_image_ = false;
+        // user_defined_size_ = false;
+
+        // image size
+        // std::cin >> height_user_defined_;
+        // std::cin >> width_user_defined_;
 
         // delayed version of integrated events
         x0_ = cv::Mat::zeros(rows, columns, CV_64FC1);
@@ -424,6 +435,17 @@ namespace comb{
         image.convertTo(image_out, CV_8UC1, 255.0 / intensity_range);
         t_last = ts;
 
+    }
+
+    void Comb_filter::user_size_input(){
+
+        std::cout << "Enter user defined height and width:" << std::endl;
+        std::cout << "Enter height: ";
+        std::cin >> height_user_defined_;
+        std::cout << "Enter width: ";
+        std::cin >> width_user_defined_;
+
+        user_defined_size_ = true;
     }
 
 }
