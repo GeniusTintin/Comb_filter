@@ -81,10 +81,20 @@ namespace comb{
 
     void Comb_filter::eventsCallback(const dvs_msgs::EventArray::ConstPtr &msg){
         // initialise image states
+        const uint32_t msg_height = msg->height;
+        const uint32_t msg_width = msg->width;
+
+        uint32_t height_user_defined;
+        uint32_t width_user_defined;
+
+        if(msg_height == 0 || msg_width == 0){
+
+        }
+
         if (!initialised_){
 
             //FIXME width and height
-            initialise_image_states(msg->height, msg->width);
+            initialise_image_states(msg_height, msg_width);
         }
 
         if (msg->events.size() > 0){
@@ -99,7 +109,7 @@ namespace comb{
                 VLOG(1) << msg->width;
 
                 // FIXME msg->width
-                if (x > 0 && x < msg->width && y > 0 && y < msg->height){
+                if (x > 0 && x < msg_width && y > 0 && y < msg_height){
 
                     const double ts = msg->events[i].ts.toSec();
                     // VLOG(1) << ts;
