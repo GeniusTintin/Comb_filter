@@ -133,6 +133,9 @@ private:
   double mtr_;
   double t_next_store_;
 
+  // FIXME: test flags:
+  bool roll_back_ = false;
+
 };
 
 } // namespace

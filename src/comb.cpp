@@ -137,15 +137,16 @@ namespace comb{
                         exp_of_log(x0_e);
 
                         grab_delay(x_d1_, int(d1_ * mtr_), 1);
-                        // grab_delay(x_d2_, int(d2_ * mtr_), 1);
-                        // grab_delay(x_d12_, int(d12_ * mtr_), 1);
+                        grab_delay(x_d2_, int(d2_ * mtr_), 1);
+                        grab_delay(x_d12_, int(d12_ * mtr_), 1);
 
-                        // grab_delay(y_d1_, int(d1_ * mtr_), 2);
-                        // grab_delay(y_d2_, int(d2_ * mtr_), 2);
-                        // grab_delay(y_d12_, int(d12_ * mtr_), 2);
+                        grab_delay(y_d1_, int(d1_ * mtr_), 2);
+                        grab_delay(y_d2_, int(d2_ * mtr_), 2);
+                        grab_delay(y_d12_, int(d12_ * mtr_), 2);
                         // calculate new y0_
-                        // y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
-                        y0_ = x0_e - x_d1_;
+                        y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
+                        // y0_ = x0_e; // direct integration
+                        // y0_ = x0_e - x_d1_; // simple version comb (no dc)
                         // FIXME
                         // std::cout << x_d1_ << std::endl;
                         store2buffer(x0_e, y0_);
@@ -228,6 +229,9 @@ namespace comb{
         // delay gain
         rho1_ = 0.99;  // distortion reduce factor
         rho2_ = 0.999; // compensate factor
+
+        // FIXME
+        roll_back_ = false;
 
         initialise_buffer(rows, columns);
 
@@ -357,7 +361,14 @@ namespace comb{
             index = buffer_length_ + index;
         }
         // FIXME
-        // std::cout << index << std::endl;
+        std::cout << index << std::endl;
+        // if(index == 4 && roll_back_){
+        //     std::cout << x_d1_ << std::endl;
+        // }
+        // else if(index == 4){
+        //     roll_back_ = true;
+        // }
+
         if(which_buffer == 1){
             ring_buffer1_[index].copyTo(sel);
         }
