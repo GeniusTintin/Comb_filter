@@ -133,7 +133,7 @@ namespace comb{
                             t_next_store_ = ts;
                         } 
 
-                        cv::Mat x0_e; // exponentional version of x0_
+                        cv::Mat x0_e = cv::Mat::zeros(msg_height, msg_width,CV_64FC1); // exponentional version of x0_
                         exp_of_log(x0_e);
 
                         grab_delay(x_d1_, int(d1_ * mtr_), 1);
@@ -244,10 +244,10 @@ namespace comb{
         t_next_store_ = 0.0;
 
         // FIXME
-        std::cout << d1_ << " " << d2_ << " " << d12_ << std::endl;
+        std::cout << "tao1:" << d1_ << " tao2:" << d2_ << " tao12:" << d12_ << std::endl;
         std::cout << 1/mtr_ << std::endl;
         buffer_length_ = int(d12_ * mtr_ + 1);
-        std::cout << buffer_length_ << std::endl;
+        std::cout << "Buffer length:" <<buffer_length_ << std::endl;
         buffer_index_ = 0;
 
         // int sizes[] = {rows, columns, buffer_length_};
@@ -284,7 +284,7 @@ namespace comb{
         x0_.at<double>(y, x) = x0_.at<double>(y, x) + c_times_p;
     }
 
-    void Comb_filter::store2buffer(const cv::Mat &figx, const cv::Mat &figy){
+    void Comb_filter::store2buffer(const cv::Mat& figx, const cv::Mat& figy){
 
         // buffer index of input and output is the same
         figx.copyTo(ring_buffer1_[buffer_index_]);
@@ -292,7 +292,7 @@ namespace comb{
 
         buffer_index_ ++;
         // ring buffer
-        if (buffer_index_ >= buffer_length_){
+        if (buffer_index_ == buffer_length_){
 
             buffer_index_ = 0;
         }

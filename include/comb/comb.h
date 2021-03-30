@@ -79,8 +79,8 @@ private:
   cv::Mat y_d12_;
 
   // ring_buffer
-  cv::Mat* ring_buffer1_;
-  cv::Mat* ring_buffer2_;
+  cv::Mat* ring_buffer1_ = NULL;
+  cv::Mat* ring_buffer2_ = NULL;
 
   bool initialised_ = false; // initial value set to false
   bool adaptive_contrast_threshold_;
@@ -92,8 +92,8 @@ private:
   std::string save_dir_;
 
   int spatial_smoothing_method_;
-  int buffer_length_;
-  int buffer_index_;
+  int buffer_length_ = 0;
+  int buffer_index_ = 0;
 
   uint32_t height_user_defined_;
   uint32_t width_user_defined_;
