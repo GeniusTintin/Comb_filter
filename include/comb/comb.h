@@ -52,6 +52,7 @@ private:
   void exp_of_log(cv::Mat& converted_image);
   void output_regulator(cv::Mat& image_out, const double &ts);
   void user_size_input();
+  inline void wait_on_enter();
 
   // publishers
   image_transport::Publisher intensity_estimate_pub_;

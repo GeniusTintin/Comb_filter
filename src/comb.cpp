@@ -269,6 +269,8 @@ namespace comb{
         buffer_length_ = int(d12_ * mtr_ + 1);
         std::cout << "Buffer length:" <<buffer_length_ << std::endl;
         buffer_index_ = 0;
+        
+        wait_on_enter();
 
         // int sizes[] = {rows, columns, buffer_length_};
         // ring_buffer1_ = new cv::Mat(3, sizes, CV_64FC1, cv::Scalar(0));
@@ -490,6 +492,11 @@ namespace comb{
         std::cin >> width_user_defined_;
 
         user_defined_size_ = true;
+    }
+
+    inline void Comb_filter::wait_on_enter(){
+            std::cout << "Enter to continue..." << std::endl;
+            std::cin.ignore().get();
     }
 
 }
