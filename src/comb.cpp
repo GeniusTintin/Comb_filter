@@ -144,9 +144,23 @@ namespace comb{
                         grab_delay(y_d2_, int(d2_ * mtr_), 2);
                         grab_delay(y_d12_, int(d12_ * mtr_), 2);
                         // calculate new y0_
-                        y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
-                        // y0_ = x0_e; // direct integration
-                        // y0_ = x0_e - x_d1_; // simple version comb (no dc)
+                        switch(filtering_method_){
+                            case 1:{
+                                y0_ = x0_e; // direct integration
+                                break;
+                            }
+                            case 2:{
+                                y0_ = x0_e - x_d1_; // simple version comb (no dc)
+                                break;
+                            }
+                            default:{
+                                y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
+                            }
+
+                        }
+                        
+                       
+                        
                         // FIXME
                         // std::cout << x_d1_ << std::endl;
                         store2buffer(x0_e, y0_);
@@ -221,6 +235,8 @@ namespace comb{
         double base_freq;
         std::cout << "Enter base frequency: " << std::endl;
         std::cin >> base_freq;
+        std::cout << "Filtering method (1:direct integration, 2:comb, 3:improved comb):" << std::endl;
+        std::cin >> filtering_method_;
         
         d1_ = 1/base_freq;
         d2_ = d1_/10;

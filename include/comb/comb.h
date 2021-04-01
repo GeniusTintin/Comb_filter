@@ -97,6 +97,7 @@ private:
 
   uint32_t height_user_defined_;
   uint32_t width_user_defined_;
+  uint32_t filtering_method_ = 0;
 
   // cutoff frequencies
   double cutoff_frequency_global_; /** rad/s */
