@@ -178,11 +178,11 @@ namespace comb{
             }
             const double ts = msg->events.back().ts.toSec();
 
-            if(adaptive_contrast_threshold_ && (ts > t_next_recalibrate_contrast_thresholds_)){
-                constexpr double contrast_threshold_recalibration_frequency = 20.0; // Hz
-                recalibrate_contrast_thresholds(ts);
-                t_next_recalibrate_contrast_thresholds_ = ts + 1/contrast_threshold_recalibration_frequency;
-            }
+            // if(adaptive_contrast_threshold_ && (ts > t_next_recalibrate_contrast_thresholds_)){
+            //     constexpr double contrast_threshold_recalibration_frequency = 20.0; // Hz
+            //     recalibrate_contrast_thresholds(ts);
+            //     t_next_recalibrate_contrast_thresholds_ = ts + 1/contrast_threshold_recalibration_frequency;
+            // }
         }
     }
 
