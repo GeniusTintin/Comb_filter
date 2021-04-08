@@ -130,6 +130,7 @@ namespace comb{
                     // integral tracking
                     integral_tracking(x, y, polarity);
 
+                    // TODO: the order of integral_tracking and store2buffer
                     while(ts > t_next_store_){
                         if(t_next_store_ == 0){
                             t_next_store_ = ts;
@@ -245,8 +246,8 @@ namespace comb{
         d12_ = d1_ + d2_;
         
         // delay gain
-        rho1_ = 0.99;  // distortion reduce factor
-        rho2_ = 0.999; // compensate factor
+        rho1_ = 0.9;  // distortion reduce factor
+        rho2_ = 0.99; // compensate factor
 
         // FIXME
         roll_back_ = false;
@@ -380,9 +381,11 @@ namespace comb{
         if(index < 0){
             index = buffer_length_ + index;
         }
+
         // FIXME
         // std::cout << index << std::endl;
         // if(index == 4 && roll_back_){
+        //     wait_on_enter();
         //     std::cout << x_d1_ << std::endl;
         // }
         // else if(index == 4){
@@ -394,6 +397,12 @@ namespace comb{
         }
         else{
             ring_buffer2_[index].copyTo(sel);
+
+            // FIXME check position in the buffer
+            // std::cout << index << std::endl;
+            // wait_on_enter();
+            // std::cout << sel << std::endl;
+            // wait_on_enter();
         }
 
         // return sel;
@@ -456,7 +465,9 @@ namespace comb{
         double LOG_INTENSITY_OFFSET = std::log(1.5); // chosen because standard APS frames range from [1, 2].
 
         x0_.copyTo(converted_image);
-        converted_image += LOG_INTENSITY_OFFSET;
+
+        // TODO delete log intensity offset
+        //converted_image += LOG_INTENSITY_OFFSET;
         cv::exp(converted_image, converted_image);
         converted_image -= 1;
 
