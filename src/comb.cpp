@@ -23,7 +23,9 @@ namespace comb{
         std::string working_dir;
         std::string save_dir;
 
-        nh_private.getParam("publish_framerate", publish_framerate_);
+        //nh_private.getParam("publish_framerate", publish_framerate_);
+        std::cout << "Enter publish framerate: " << std::endl;
+        std::cin >> publish_framerate_;
         nh_private.getParam("save_dir", save_dir);
         nh_private.getParam("working_dir", working_dir);
 
@@ -379,7 +381,7 @@ namespace comb{
             index = buffer_length_ + index;
         }
         // FIXME
-        std::cout << index << std::endl;
+        // std::cout << index << std::endl;
         // if(index == 4 && roll_back_){
         //     std::cout << x_d1_ << std::endl;
         // }
@@ -436,7 +438,9 @@ namespace comb{
         cv_image.image = display_image;
         cv_image.header.stamp = timestamp;
         intensity_estimate_pub_.publish(cv_image.toImageMsg());
-        VLOG(1) << "Publish image message";
+
+        // FIXME publish message
+        // VLOG(1) << "Publish image message";
 
         if (save_images_){
 
