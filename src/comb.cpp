@@ -164,7 +164,8 @@ namespace comb{
                         
                         // FIXME
                         // std::cout << x_d1_ << std::endl;
-                        if(ts >= 4 && (y0_.at<double>(10,10) > 5.9 || y0_.at<double>(10,10) < 4.5)){
+                        std::cout << ts << std::endl;
+                        if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
                             std::cout << ts << std::endl;
                             std::cout << y0_ << std::endl;
                             wait_on_enter();
