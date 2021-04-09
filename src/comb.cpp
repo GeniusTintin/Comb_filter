@@ -160,9 +160,7 @@ namespace comb{
                                 y0_ = x0_e - x_d1_ - rho2_ * x_d2_ + rho2_ * x_d12_ + rho1_ * y_d1_ + y_d2_ - rho1_ * y_d12_;
                             }
 
-                        }
-                        
-                       
+                        }                    
                         
                         // FIXME
                         // std::cout << x_d1_ << std::endl;
