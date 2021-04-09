@@ -470,7 +470,7 @@ namespace comb{
         x0_.copyTo(converted_image);
 
         // TODO delete log intensity offset
-        //converted_image += LOG_INTENSITY_OFFSET;
+        converted_image += LOG_INTENSITY_OFFSET;
         cv::exp(converted_image, converted_image);
         converted_image -= 1;
 
