@@ -164,6 +164,11 @@ namespace comb{
                         
                         // FIXME
                         // std::cout << x_d1_ << std::endl;
+                        if(ts >= 4 && (y0_.at<double>(10,10) > 5.9 || y0_.at<double>(10,10) < 4.5)){
+                            std::cout << ts << std::endl;
+                            std::cout << y0_ << std::endl;
+                            wait_on_enter();
+                        }
                         store2buffer(x0_e, y0_);
 
                         t_next_store_ += 1/mtr_;
