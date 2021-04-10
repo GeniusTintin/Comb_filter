@@ -531,9 +531,10 @@ namespace comb{
 
     void Comb_filter::write_log(std::string filename, std::string content){
         
-        const char* path = "~/home/tintin/catkin_ws/src/comb/";
-        std::ofstream file2write(path);
-        file2write.open(filename, std::ios_base::app); // append instead of overwrite
+        std::string path = "/home/tintin/catkin_ws/src/comb/";
+        path += filename;
+        std::ofstream file2write;
+        file2write.open(path, std::ios_base::app); // append instead of overwrite
         file2write << content << std::endl;
 
     }
