@@ -163,13 +163,21 @@ namespace comb{
                         }                    
                         
                         // FIXME
-                        // std::cout << x_d1_ << std::endl;
-                        std::cout << ts << std::endl;
-                        if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
-                            std::cout << ts << std::endl;
-                            std::cout << y0_ << std::endl;
-                            wait_on_enter();
+                        // std::cout << ts << std::endl;
+                        if(ts >= 4.48){
+                            std::string message = "time: ";
+                            message += std::to_string(ts);
+                            message += ", value at (10, 10): ";
+                            message += std::to_string(y0_.at<double>(10,10));
+                            write_log("log.txt", message);
                         }
+                        // if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
+                        //     std::cout << ts << std::endl;
+                        //     std::cout << y0_ << std::endl;
+                        //     wait_on_enter();
+                        // }
+                        
+
                         store2buffer(x0_e, y0_);
 
                         t_next_store_ += 1/mtr_;
@@ -513,9 +521,19 @@ namespace comb{
         user_defined_size_ = true;
     }
 
+    // used for logging and debuging
+
     inline void Comb_filter::wait_on_enter(){
-            std::cout << "Enter to continue..." << std::endl;
-            std::cin.ignore().get();
+        
+        std::cout << "Enter to continue..." << std::endl;
+        std::cin.ignore().get();
     }
 
+    void Comb_filter::write_log(std::string filename, std::string content){
+        
+        std::ofstream file2write;
+        file2write.open(filename, std::ios_base::app); // append instead of overwrite
+        file2write << content << std::endl;
+
+    }
 }
