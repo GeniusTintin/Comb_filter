@@ -167,11 +167,13 @@ namespace comb{
                         if(ts >= 4.48){
                             std::string message = "time: ";
                             message += std::to_string(ts);
-                            message += ", value at (10, 10): ";
+                            message += ", value at (10,10): ";
                             message += std::to_string(y0_.at<double>(10,10));
+                            message += ", value at (20,20): ";
+                            message += std::to_string(y0_.at<double>(20,20));
                             write_log("log.txt", message);
                         }
-                        if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
+                        if(ts >= 4.7 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
                             std::cout << ts << std::endl;
                             std::cout << y0_ << std::endl;
                             wait_on_enter();
