@@ -171,11 +171,11 @@ namespace comb{
                             message += std::to_string(y0_.at<double>(10,10));
                             write_log("log.txt", message);
                         }
-                        // if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
-                        //     std::cout << ts << std::endl;
-                        //     std::cout << y0_ << std::endl;
-                        //     wait_on_enter();
-                        // }
+                        if(ts >= 4 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
+                            std::cout << ts << std::endl;
+                            std::cout << y0_ << std::endl;
+                            wait_on_enter();
+                        }
                         
 
                         store2buffer(x0_e, y0_);
@@ -531,7 +531,8 @@ namespace comb{
 
     void Comb_filter::write_log(std::string filename, std::string content){
         
-        std::ofstream file2write;
+        const char* path = "/home/tintin/catkin_ws/src/comb/";
+        std::ofstream file2write(path);
         file2write.open(filename, std::ios_base::app); // append instead of overwrite
         file2write << content << std::endl;
 
