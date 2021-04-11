@@ -164,18 +164,52 @@ namespace comb{
                         
                         // FIXME
                         // std::cout << ts << std::endl;
-                        if(ts >= 4.48){
+                        // if(ts >= 4.48){
+                        //     std::string message = "time: ";
+                        //     message += std::to_string(ts);
+                        //     message += ", value at (10,10): ";
+                        //     message += std::to_string(y0_.at<double>(10,10));
+                        //     message += ", value at (20,20): ";
+                        //     message += std::to_string(y0_.at<double>(20,20));
+                        //     write_log("log.txt", message);
+                        // }
+                        if(ts >= 4.47 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
+                            std::cout << ts << std::endl;
+                            // std::cout << y0_ << std::endl;
                             std::string message = "time: ";
                             message += std::to_string(ts);
-                            message += ", value at (10,10): ";
+                            message += "value at (10,10): ";
                             message += std::to_string(y0_.at<double>(10,10));
-                            message += ", value at (20,20): ";
-                            message += std::to_string(y0_.at<double>(20,20));
-                            write_log("log.txt", message);
-                        }
-                        if(ts >= 4.7 && (y0_.at<double>(10,10) > 0.59 || y0_.at<double>(10,10) < 0.45)){
-                            std::cout << ts << std::endl;
-                            std::cout << y0_ << std::endl;
+                            write_log("delay_value.txt", message);
+
+                            message = "y_d1_: ";
+                            message += std::to_string(y_d1_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "y_d2_: ";
+                            message += std::to_string(y_d2_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "y_d12_: ";
+                            message += std::to_string(y_d12_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "x_d1_: ";
+                            message += std::to_string(x_d1_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "x_d2_: ";
+                            message += std::to_string(x_d2_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "x_d12_: ";
+                            message += std::to_string(x_d12_.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
+                            message = "x0_e: ";
+                            message += std::to_string(x0_e.at<double>(10,10));
+                            write_log("delay_value.txt", message);
+
                             wait_on_enter();
                         }
                         
